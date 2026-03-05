@@ -57,9 +57,66 @@ Follow `using-git-worktrees` skill:
 4. Run project setup (npm install / poetry install etc.)
 5. Verify test baseline
 
-### Phase 2: Implement Feature
+### Phase 2: Create PR-Opening Commit
 
-Complete feature development in worktree:
+**Make the first commit specifically for creating the PR:**
+
+```bash
+# In worktree directory
+cd .worktrees/<branch-name>
+
+# First commit - creates the PR foundation
+git add -A
+git commit -m "chore: create PR for <feature-name>
+
+## TODO
+- [ ] Implement feature
+- [ ] Add tests
+- [ ] Update documentation"
+```
+
+### Phase 3: Create WIP PR (Draft)
+
+**Immediately after first commit, create a draft PR:**
+
+```bash
+# Create draft PR (WIP) - title format: scope: summary
+gh pr create --title "feat: <feature-name>" \
+  --body "## Motivation
+- Why this change is needed
+
+## Approach
+- How the feature is implemented
+
+## Considered Alternatives
+- Alternative approaches considered
+
+## Risk & Rollout
+- Potential risks and rollout strategy
+
+## Testing Evidence
+- Test results or evidence
+
+## Status: Work in Progress
+- [ ] Task 1
+- [ ] Task 2
+
+## Type of Change
+- [ ] Bug fix
+- [x] New feature
+- [ ] Breaking change" \
+  --base main \
+  --draft
+```
+
+**Why create WIP PR immediately:**
+- PR link is available for tracking from the start
+- Changes are already backed up remotely
+- Can reference PR in commit messages
+
+### Phase 4: Implement Feature (Iterative)
+
+Continue development with multiple commits:
 
 ```bash
 # In worktree directory
@@ -70,39 +127,51 @@ cd .worktrees/<branch-name>
 # 2. Run tests
 # 3. Commit changes
 git add -A
-git commit -m "feat: implement <feature>"
+git commit -m "feat: implement <feature-part-1>"
 
-# Push branch
-git push -u origin <branch-name>
+# Push to update PR
+git push
+
+# Continue with more commits as needed...
+git add -A
+git commit -m "feat: implement <feature-part-2>"
+
+git push
 ```
 
-### Phase 3: Create PR
+### Phase 5: Mark Ready for Review
 
-Use gh CLI to create PR:
+**When feature is complete, update PR:**
 
 ```bash
-# Method 1: Interactive create
-gh pr create --title "feat: <feature-name>" \
-  --body "## Description
-<description>
+# Finalize title and mark ready - title format: scope: summary
+gh pr edit <PR-NUMBER> --title "feat: <feature-name>"
+
+# If using draft:
+gh pr ready <PR-NUMBER>
+
+# Or open in browser to mark ready
+gh pr view <PR-NUMBER> --web
+```
+
+Update PR body to reflect completion:
+
+```markdown
+## Status: Ready for Review ✅
+
+- [x] Task 1
+- [x] Task 2
+
+## Testing Evidence
+- Test results or evidence
 
 ## Type of Change
 - [ ] Bug fix
 - [x] New feature
 - [ ] Breaking change
-
-## Testing
-<test instructions>" \
-  --base main
-
-# Method 2: Auto-fill from commits
-gh pr create --fill  # Uses commit messages
-
-# Method 3: Open in browser
-gh pr create --web
 ```
 
-### Phase 4: Verify PR
+### Phase 6: Verify PR
 
 After creating PR, invoke `my-pull-requests` skill to confirm status:
 
@@ -115,9 +184,11 @@ I'm using the my-pull-requests skill to verify the PR status.
 | Phase | Action | Skill Reference |
 |-------|--------|-----------------|
 | 1. Worktree | Create isolated workspace | `using-git-worktrees` |
-| 2. Development | Implement and commit | (built-in) |
-| 3. PR | Create Pull Request | (gh CLI) |
-| 4. Verification | Confirm PR status | `my-pull-requests` |
+| 2. PR Commit | First commit for PR | `git commit` |
+| 3. WIP PR | Create draft PR immediately | `gh pr create --draft` |
+| 4. Development | Implement with multiple commits | (built-in) |
+| 5. Ready | Mark PR ready for review | `gh pr ready` |
+| 6. Verification | Confirm PR status | `my-pull-requests` |
 
 ## Common Scenarios
 
