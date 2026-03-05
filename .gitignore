@@ -1,2 +1,17 @@
+# Worktrees
 .worktrees/
 worktrees/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Temp
+*.tmp
+*.log
