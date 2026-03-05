@@ -6,13 +6,10 @@ description: >
 
 # PR + Worktree Workflow
 
-> ⚠️ **CRITICAL: This skill MUST be invoked via Skill tool, not mentioned by name**
-
 ## Common Mistakes (Read First)
 
 **DO NOT use this skill when:**
 - User only mentions worktree (use `using-git-worktrees` instead)
-- User only mentions PR (just use `gh pr create`)
 
 **When to prompt user:**
 - If user says "create a PR" or "I want to make a PR" → Ask: "Would you like me to use the pr-worktree-workflow to create a worktree and PR together?"
