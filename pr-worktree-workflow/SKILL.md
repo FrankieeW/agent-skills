@@ -1,10 +1,32 @@
 ---
 name: pr-worktree-workflow
 description: >
-  Complete workflow for creating worktree and PR based on tasks. Use when: starting feature work that needs an isolated workspace and will create a Pull Request.
+  Complete workflow for creating worktree and PR based on tasks. Use when: user explicitly requests worktree creation AND Pull Request creation together.
 ---
 
 # PR + Worktree Workflow
+
+> ⚠️ **CRITICAL: This skill MUST be invoked via Skill tool, not mentioned by name**
+
+## Common Mistakes (Read First)
+
+**DO NOT use this skill when:**
+- User only mentions worktree (use `using-git-worktrees` instead)
+- User only mentions PR (just use `gh pr create`)
+- User mentions this skill's name but doesn't explicitly request to use it
+- You haven't confirmed user wants BOTH worktree AND PR
+
+**Correct usage:**
+```
+User: Create a worktree and PR for the new feature
+AI: I'm using the pr-worktree-workflow skill... [then invoke via Skill tool]
+```
+
+**Wrong usage:**
+```
+User: I need a worktree for this task
+AI: I'll use pr-worktree-workflow... [INCORRECT - should use using-git-worktrees]
+```
 
 ## Overview
 
@@ -18,6 +40,14 @@ This skill integrates `using-git-worktrees` and `my-pull-requests` to provide a 
 **Core Principle:** Worktree isolation + PR process = reliable feature development
 
 **Opening Announcement:** "I'm using the pr-worktree-workflow skill to complete the full workflow from worktree creation to PR."
+
+**Before executing any steps, you MUST confirm:**
+```
+Before I begin, let me confirm: you want me to create a worktree AND a Pull Request, correct?
+```
+
+**If user says yes → Proceed with workflow.**
+**If user says no → Do NOT use this skill. Use appropriate individual skill instead.**
 
 ## Workflow Steps
 
