@@ -13,20 +13,9 @@ description: >
 **DO NOT use this skill when:**
 - User only mentions worktree (use `using-git-worktrees` instead)
 - User only mentions PR (just use `gh pr create`)
-- User mentions this skill's name but doesn't explicitly request to use it
-- You haven't confirmed user wants BOTH worktree AND PR
 
-**Correct usage:**
-```
-User: Create a worktree and PR for the new feature
-AI: I'm using the pr-worktree-workflow skill... [then invoke via Skill tool]
-```
-
-**Wrong usage:**
-```
-User: I need a worktree for this task
-AI: I'll use pr-worktree-workflow... [INCORRECT - should use using-git-worktrees]
-```
+**When to prompt user:**
+- If user says "create a PR" or "I want to make a PR" → Ask: "Would you like me to use the pr-worktree-workflow to create a worktree and PR together?"
 
 ## Overview
 
@@ -41,13 +30,18 @@ This skill integrates `using-git-worktrees` and `my-pull-requests` to provide a 
 
 **Opening Announcement:** "I'm using the pr-worktree-workflow skill to complete the full workflow from worktree creation to PR."
 
-**Before executing any steps, you MUST confirm:**
-```
-Before I begin, let me confirm: you want me to create a worktree AND a Pull Request, correct?
-```
+## Interaction Pattern (Follow This)
 
-**If user says yes → Proceed with workflow.**
-**If user says no → Do NOT use this skill. Use appropriate individual skill instead.**
+Based on how the skill is invoked, respond differently:
+
+### Case 1: Skill loaded manually + NO task provided
+→ Ask: "What task would you like me to work on?"
+
+### Case 2: Skill loaded manually + task IS provided
+→ Execute workflow directly (skip confirmation)
+
+### Case 3: User mentions "PR" or "Pull Request" in conversation (without loading skill)
+→ Ask: "Would you like me to use the pr-worktree-workflow to create a worktree and PR together?"
 
 ## Workflow Steps
 
