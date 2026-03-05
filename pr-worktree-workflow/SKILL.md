@@ -1,0 +1,245 @@
+---
+name: pr-worktree-workflow
+description: >
+  Complete workflow for creating worktree and PR based on tasks. Use when: starting feature work that needs an isolated workspace and will create a Pull Request.
+---
+
+# PR + Worktree Workflow
+
+## Overview
+
+This skill integrates `using-git-worktrees` and `my-pull-requests` to provide a complete task-to-PR workflow:
+
+1. **Create Worktree** - Use `using-git-worktrees` to establish isolated workspace
+2. **Implement Feature** - Work in the new branch
+3. **Create PR** - Create Pull Request from the completed work
+4. **Verify PR** - Confirm PR status
+
+**Core Principle:** Worktree isolation + PR process = reliable feature development
+
+**Opening Announcement:** "I'm using the pr-worktree-workflow skill to complete the full workflow from worktree creation to PR."
+
+## Workflow Steps
+
+### Phase 1: Create Worktree
+
+**Invoke `using-git-worktrees` skill:**
+
+```
+I'm using the using-git-worktrees skill to set up an isolated workspace.
+```
+
+Follow `using-git-worktrees` skill:
+1. Check existing directory (.worktrees or worktrees)
+2. Verify directory is ignored by .gitignore
+3. Create worktree with new branch
+4. Run project setup (npm install / poetry install etc.)
+5. Verify test baseline
+
+### Phase 2: Implement Feature
+
+Complete feature development in worktree:
+
+```bash
+# In worktree directory
+cd .worktrees/<branch-name>
+
+# Regular development flow
+# 1. Write code
+# 2. Run tests
+# 3. Commit changes
+git add -A
+git commit -m "feat: implement <feature>"
+
+# Push branch
+git push -u origin <branch-name>
+```
+
+### Phase 3: Create PR
+
+Use gh CLI to create PR:
+
+```bash
+# Method 1: Interactive create
+gh pr create --title "feat: <feature-name>" \
+  --body "## Description
+<description>
+
+## Type of Change
+- [ ] Bug fix
+- [x] New feature
+- [ ] Breaking change
+
+## Testing
+<test instructions>" \
+  --base main
+
+# Method 2: Auto-fill from commits
+gh pr create --fill  # Uses commit messages
+
+# Method 3: Open in browser
+gh pr create --web
+```
+
+### Phase 4: Verify PR
+
+After creating PR, invoke `my-pull-requests` skill to confirm status:
+
+```
+I'm using the my-pull-requests skill to verify the PR status.
+```
+
+## Quick Reference
+
+| Phase | Action | Skill Reference |
+|-------|--------|-----------------|
+| 1. Worktree | Create isolated workspace | `using-git-worktrees` |
+| 2. Development | Implement and commit | (built-in) |
+| 3. PR | Create Pull Request | (gh CLI) |
+| 4. Verification | Confirm PR status | `my-pull-requests` |
+
+## Common Scenarios
+
+### Scenario 1: New Feature Development
+
+```
+User: I need to develop a new login feature
+
+AI: I'm using the pr-worktree-workflow skill to complete the full workflow from worktree creation to PR.
+
+[Phase 1: Invoke using-git-worktrees]
+- Check .worktrees/ directory
+- Verify ignored
+- Create worktree: .worktrees/login-feature -b feature/login
+- Run npm install
+- Verify tests pass
+
+[Phase 2: Development]
+- Implement login feature
+- git add -A && git commit -m "feat: add login feature"
+- git push -u origin feature/login
+
+[Phase 3: Create PR]
+gh pr create --title "feat: add login feature" --body "..."
+
+[Phase 4: Verification]
+Invoke my-pull-requests to confirm PR status
+
+PR created: https://github.com/owner/repo/pull/123
+Worktree location: /project/.worktrees/login-feature
+```
+
+### Scenario 2: Bug Fix
+
+```bash
+# Similar flow, use fix/ prefix
+git worktree add .worktrees/bug-fix -b fix/<issue-name>
+# ... after fixing
+gh pr create --title "fix: <description>" --base main
+```
+
+### Scenario 3: Large Refactoring
+
+```bash
+# Use refactor/ prefix
+git worktree add .worktrees/refactor-api -b refactor/api-cleanup
+# ... after refactoring
+gh pr create --title "refactor: clean up API" --base main
+```
+
+## Branch Naming Conventions
+
+| Type | Prefix | Example |
+|------|--------|---------|
+| New Feature | feature/ | feature/user-auth |
+| Bug Fix | fix/ | fix/login-validation |
+| Refactoring | refactor/ | refactor/api-cleanup |
+| Experiment | experiment/ | experiment/new-algorithm |
+| Documentation | docs/ | docs/readme-update |
+
+## Notes
+
+### Worktree Cleanup
+
+After completing PR, optionally cleanup worktree:
+
+```bash
+# Delete remote branch
+git push origin --delete <branch-name>
+
+# Delete local worktree
+git worktree remove .worktrees/<branch-name>
+
+# Clean up orphaned branches
+git branch -d <branch-name>
+```
+
+### Stay Synced
+
+Before starting work, ensure main branch is up-to-date:
+
+```bash
+git fetch origin
+git checkout main
+git pull origin main
+git checkout <feature-branch>
+```
+
+### PR Description Template
+
+```markdown
+## Description
+<!-- Describe what you did and why -->
+
+## Type of Change
+- [ ] Bug fix
+- [ ] New feature
+- [ ] Breaking change
+- [ ] Documentation update
+
+## Testing
+<!-- Describe how to test your changes -->
+
+## Checklist
+- [ ] Tests pass locally
+- [ ] Code follows project style
+- [ ] Documentation updated (if needed)
+```
+
+## Integration
+
+**Called by:**
+- `brainstorming` - when design is approved
+- `executing-plans` - when there's an implementation plan
+- `subagent-driven-development` - when subagent needs to execute tasks
+
+**Works with:**
+- `using-git-worktrees` - Worktree creation
+- `my-pull-requests` - PR status verification
+- `finishing-a-development-branch` - Branch completion cleanup
+
+## Error Handling
+
+### Worktree Creation Failed
+
+```
+Error: fatal: '<path>' already exists
+```
+
+Solution: Check if directory already exists or use different branch name
+
+### Push Failed
+
+```
+Error: fatal: The current branch <branch> has no upstream branch.
+```
+
+Solution: Use `git push -u origin <branch>` to set upstream
+
+### PR Creation Failed
+
+```
+Error: GraphQL: Repository not found
+```
+
+Solution: Ensure you're in correct repo directory or authenticated via `gh auth login`
