@@ -40,7 +40,22 @@ description: >
 
 ## Installation
 
-Skills are automatically discovered by the AI agent from this repository. No manual installation required.
+### Global Installation (for all agents)
+```bash
+npx -g skills add FrankieeW/agent-skills
+```
+
+### Project Installation
+```bash
+npx skills add FrankieeW/agent-skills
+```
+
+### List Available Skills
+```bash
+npx skills add FrankieeW/agent-skills --list
+```
+
+Skills are automatically discovered by the AI agent from this repository.
 
 ## License
 
