@@ -10,6 +10,7 @@ This repository contains reusable skills that provide specialized instructions f
 
 | Skill | Description |
 |-------|-------------|
+| [mathlib-contributing](./mathlib-contributing/) | Complete workflow for contributing to mathlib (Lean 4), including PR workflow, code style, documentation, and review process |
 | [pr-worktree-workflow](./pr-worktree-workflow/) | Complete workflow for creating worktree and PR based on tasks |
 
 ## Adding New Skills
