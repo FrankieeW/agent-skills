@@ -13,6 +13,7 @@ This repository contains reusable skills that provide specialized instructions f
 | [mathlib-workflow](./mathlib-workflow/) | Contribution workflow for mathlib (Lean 4) - setup, git workflow, PR conventions, and review process |
 | [mathlib-style](./mathlib-style/) | Code style guide for mathlib (Lean 4) - naming conventions, formatting, and documentation |
 | [pr-worktree-workflow](./pr-worktree-workflow/) | Complete workflow for creating worktree and PR based on tasks |
+| [lmfdb-cli](./lmfdb-cli/) | Query LMFDB to verify number field properties, elliptic curve data, and algebraic number theory results |
 
 ## Adding New Skills
 
