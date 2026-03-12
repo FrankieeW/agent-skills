@@ -1,187 +1,150 @@
 ---
 name: lmfdb-cli
 description: >
-  Use lmfdb-cli to query the LMFDB database for verifying number field conjectures and results. Use when: verifying number field properties (discriminants, class numbers, Galois groups, signatures), checking elliptic curve data, or validating algebraic number theory computations against LMFDB.
+  Query LMFDB to verify number theory results. Use when: checking number field properties (discriminants, class numbers, Galois groups, signatures), verifying elliptic curve data (rank, torsion, conductor), or validating algebraic number theory computations with concrete examples from LMFDB.
 ---
 
-# lmfdb-cli Development Guide
+# Querying LMFDB for Mathematical Verification
 
-A pure Go CLI for querying the [LMFDB](https://www.lmfdb.org/) mathematical database. Single-file architecture with chromedp for reCAPTCHA bypass.
+Use `lmfdb` CLI to look up concrete examples and verify results against the [LMFDB](https://www.lmfdb.org/) database.
 
-## Architecture
-
-```
-cmd/lmfdb/main.go    # All CLI logic (single file)
-go.mod               # Go 1.24+, chromedp dependency
-.github/workflows/   # CI: cross-platform builds
-```
-
-**Design decisions:**
-- Single-file CLI (`cmd/lmfdb/main.go`) — keeps distribution simple
-- `flag.NewFlagSet` per subcommand (no cobra/urfave)
-- Two-tier API: direct HTTP first, headless Chrome fallback for reCAPTCHA
-- ANSI color output for JSON syntax highlighting (no external library)
-
-## Build & Run
+## Installation
 
 ```bash
-# Build
-go build -o lmfdb ./cmd/lmfdb
-
-# Quick test
-./lmfdb nf -d 2 -n 5
-./lmfdb ec -r 2 --fmt json
-./lmfdb list
-./lmfdb version
+brew tap frankieew/tap && brew install lmfdb-cli
+# or build from source: go build -o lmfdb ./cmd/lmfdb
 ```
 
-## LMFDB API Patterns
+## Number Fields (`nf`)
 
-### URL Construction
+### Quick Reference
 
-LMFDB API uses type-prefixed query parameters:
-
-```
-https://www.lmfdb.org/api/<collection>/?_format=json&_limit=N&field=<type><value>
+```bash
+lmfdb nf [options]
 ```
 
-**Type prefixes:**
-| Prefix | Type    | Example              |
-|--------|---------|----------------------|
-| `i`    | integer | `degree=i2`          |
-| `s`    | string  | `label=s2.0.3.1`     |
-| `li`   | int list| `signature=li0;1`    |
-| `ls`   | str list| `...=lsa;b`          |
+| Flag | Meaning | Example |
+|------|---------|---------|
+| `-d <n>` | Degree [Q(α):Q] | `-d 3` (cubic fields) |
+| `-n <n>` | Number of results | `-n 50` |
+| `--disc <val>` | Discriminant | `--disc -23` |
+| `--class <n>` | Class number h(K) | `--class 1` |
+| `--sig <r1,r2>` | Signature (r₁,r₂) | `--sig 0,1` (totally imaginary) |
+| `--id <label>` | Specific field by LMFDB label | `--id 2.0.3.1` |
+| `--sort <field>` | Sort (prefix `-` for desc) | `--sort -disc` |
+| `-f <fields>` | Select specific fields | `-f label,disc,class_number` |
+| `--fmt json` | Output as JSON | `--fmt json` |
+| `-o <file>` | Save to file | `-o results.csv --fmt csv` |
+| `--browser` | Bypass reCAPTCHA | for large queries |
 
-**Collections:** `nf_fields` (number fields), `ec_curvedata` (elliptic curves), and many more via `lmfdb list`.
+### Common Verification Tasks
 
-### Adding a New Collection
-
-Follow the existing pattern in `main.go`:
-
-1. **Define options struct:**
-```go
-type NewCollectionOptions struct {
-    Limit, Offset int
-    Sort, Fields   string
-    Output, Format string
-    Quiet, Browser bool
-    // collection-specific fields...
-}
+**Find all quadratic fields with class number 1:**
+```bash
+lmfdb nf -d 2 --class 1 -n 100
 ```
 
-2. **Add subcommand parsing** in `main()`:
-```go
-case "newcmd":
-    cmd := flag.NewFlagSet("newcmd", flag.ExitOnError)
-    cmd.IntVar(&limit, "n", 10, "Number of results")
-    // ... more flags
-    cmd.Parse(os.Args[2:])
-    queryNewCollection(opts)
+**Check imaginary quadratic fields (signature (0,1)):**
+```bash
+lmfdb nf -d 2 --sig 0,1 -n 50
 ```
 
-3. **Implement query function** following `queryNumberFields` / `queryEllipticCurves` pattern:
-```go
-func queryNewCollection(opts NewCollectionOptions) {
-    url := "https://www.lmfdb.org/api/collection_name/?_format=json"
-    url += fmt.Sprintf("&_limit=%d", opts.Limit)
-    // Build query params with type prefixes
-    if opts.SomeField != "" {
-        url += "&field=" + opts.SomeField
-    }
-    // Use queryAPI(url) or queryWithBrowser(url) based on opts.Browser
-}
+**Look up a specific number field by label:**
+```bash
+lmfdb nf --id 2.0.3.1
+# Returns full record: discriminant, class number, Galois group, regulator, etc.
 ```
 
-4. **Register in help text** and `list` command output.
-
-## Output Formatting
-
-Three formats via `--fmt` flag:
-
-| Format  | Function       | Notes                          |
-|---------|----------------|--------------------------------|
-| `table` | `printTable()` | Auto-selects up to 6 columns, truncates at 14 chars |
-| `json`  | `printColorJSON()` | ANSI syntax highlighting (cyan/green/yellow/magenta) |
-| `csv`   | `writeCSV()`   | Standard encoding/csv          |
-
-When adding output, reuse `printTable()` — it auto-adapts columns from JSON keys.
-
-## reCAPTCHA Bypass
-
-The `--browser` flag activates headless Chrome via chromedp:
-
-```go
-func queryWithBrowser(url string) ([]byte, error) {
-    ctx, cancel := chromedp.NewContext(context.Background())
-    defer cancel()
-    // Navigate, wait for JSON content, extract body
-}
+**Cubic fields sorted by discriminant:**
+```bash
+lmfdb nf -d 3 --sort disc -n 20
 ```
 
-- `queryAPI()` tries direct HTTP first
-- If response contains reCAPTCHA HTML, suggest `--browser` flag
-- `install-browser` subcommand downloads Chromium
-
-## Cross-Platform Build
-
-GitHub Actions builds for 5 targets:
-
-```yaml
-matrix:
-  include:
-    - {goos: linux,   goarch: amd64}
-    - {goos: linux,   goarch: arm64}
-    - {goos: darwin,  goarch: amd64}
-    - {goos: darwin,  goarch: arm64}
-    - {goos: windows, goarch: amd64}
+**Totally real quartic fields:**
+```bash
+lmfdb nf -d 4 --sig 4,0 -n 20
 ```
 
-**Release flow:** git tag `v*` → builds → GitHub Release with binaries.
-
-**Homebrew:** `brew tap frankieew/tap && brew install lmfdb-cli`
-
-## Testing Guidelines
-
-Currently no tests. When adding tests:
-
-```go
-// cmd/lmfdb/main_test.go or extract to packages
-
-func TestBuildURL(t *testing.T) {
-    tests := []struct {
-        name     string
-        opts     NumberFieldOptions
-        expected string
-    }{
-        {"degree 2", NumberFieldOptions{Degree: 2}, "...degree=i2..."},
-    }
-    for _, tt := range tests {
-        t.Run(tt.name, func(t *testing.T) {
-            got := buildNumberFieldURL(tt.opts)
-            if got != tt.expected {
-                t.Errorf("got %s, want %s", got, tt.expected)
-            }
-        })
-    }
-}
+**Export for further analysis:**
+```bash
+lmfdb nf -d 2 -n 200 -f label,disc,class_number,regulator --fmt json -o quadratic_fields.json
 ```
 
-**Priority test targets:** URL construction, JSON parsing, output formatting, reCAPTCHA detection.
+### LMFDB Number Field Labels
 
-## Common Tasks
+Format: `d.r.D.n` where:
+- `d` = degree
+- `r` = number of real embeddings (0 or positive)
+- `D` = absolute discriminant
+- `n` = index among fields with same (d, r, D)
 
-| Task | Approach |
-|------|----------|
-| Add query filter | Add flag to options struct + URL builder |
-| New output column | Modify `printTable()` column selection |
-| New collection | Follow "Adding a New Collection" pattern above |
-| Fix reCAPTCHA | Debug in `queryWithBrowser()`, check chromedp selectors |
-| Update version | Change `version` const in `main.go`, tag with `git tag v*` |
+Example: `2.0.3.1` = degree 2, no real embeddings, |disc| = 3, first such field = Q(√-3)
 
-## Resources
+### Available Fields for `-f`
 
-- [LMFDB API Docs](https://www.lmfdb.org/api/)
-- [LMFDB Website](https://www.lmfdb.org/)
-- [chromedp Documentation](https://pkg.go.dev/github.com/chromedp/chromedp)
-- [Homebrew Tap](https://github.com/frankieew/homebrew-tap)
+Key fields in `nf_fields` collection:
+- `label` — LMFDB label
+- `degree` — [K:Q]
+- `disc` — discriminant Δ_K
+- `class_number` — h(K)
+- `class_group` — structure of Cl(K)
+- `signature` — [r₁, r₂]
+- `regulator` — regulator R_K
+- `galt` — Galois group (transitive group label)
+- `subfields` — subfield labels
+- `zk` — integral basis
+- `coeffs` — minimal polynomial coefficients
+
+## Elliptic Curves (`ec`)
+
+### Quick Reference
+
+```bash
+lmfdb ec [options]
+```
+
+| Flag | Meaning | Example |
+|------|---------|---------|
+| `-r <n>` | Mordell-Weil rank | `-r 2` |
+| `-t <n>` | Torsion order | `-t 7` |
+| `--conductor <n>` | Conductor N | `--conductor 11` |
+| `-n <n>` | Number of results | `-n 50` |
+| `--sort <field>` | Sort | `--sort conductor` |
+| `-f <fields>` | Select fields | `-f lmfdb_label,rank,conductor` |
+
+### Common Verification Tasks
+
+**Find rank 2 elliptic curves:**
+```bash
+lmfdb ec -r 2 -n 20
+```
+
+**Curves with torsion group of order 7:**
+```bash
+lmfdb ec -t 7 -n 10
+```
+
+**Curves of conductor 11:**
+```bash
+lmfdb ec --conductor 11 --fmt json
+```
+
+**Export rank data for analysis:**
+```bash
+lmfdb ec -r 0 -n 100 -f lmfdb_label,conductor,torsion_structure --fmt csv -o rank0_curves.csv
+```
+
+## Other Collections
+
+```bash
+lmfdb list   # Show all available collections
+```
+
+Available: number fields, elliptic curves, genus 2 curves, Dirichlet characters, Maass forms, modular forms, local fields, Artin representations, Belyi maps.
+
+## Tips
+
+- **reCAPTCHA blocking**: For large queries (n > 50), use `--browser` flag. Run `lmfdb install-browser` first to download Chromium.
+- **JSON for parsing**: Use `--fmt json` when you need to process results programmatically.
+- **Pagination**: Combine `-n` and `--offset` to page through large result sets.
+- **Specific fields**: Use `-f` to request only the fields you need — makes output cleaner and queries faster.
