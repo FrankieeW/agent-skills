@@ -1,8 +1,6 @@
 ---
 name: ssh
 description: SSH remote access patterns and utilities for connecting to servers, managing keys, configuring connections, creating tunnels, and transferring files.
-- scp
-- rsync
 ---
 
 # SSH Skill
