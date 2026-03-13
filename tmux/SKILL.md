@@ -1,3 +1,9 @@
+---
+name: tmux
+description: >
+  Terminal multiplexer patterns for controlling interactive applications. Use when: running interactive REPLs (python, node), debugging with gdb/lldb, running dev servers, working with vim/git rebase, or monitoring Claude Code sessions.
+---
+
 # tmux Skill
 
 ## Overview
