@@ -1,7 +1,6 @@
 ---
 name: lmfdb-cli
-description: >
-  Query LMFDB to verify number theory results. Use when: checking number field properties (discriminants, class numbers, Galois groups, signatures), verifying elliptic curve data (rank, torsion, conductor), or validating algebraic number theory computations with concrete examples from LMFDB.
+description: Query LMFDB to verify number theory results, including number field properties, elliptic curve data, and algebraic number theory computations.
 ---
 
 # Querying LMFDB for Mathematical Verification

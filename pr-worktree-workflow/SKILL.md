@@ -1,7 +1,6 @@
 ---
 name: pr-worktree-workflow
-description: >
-  Complete workflow for creating worktree and PR based on tasks. Use when: user explicitly requests worktree creation AND Pull Request creation together.
+description: Complete workflow for creating git worktrees and Pull Requests, including worktree setup, branch management, and PR creation.
 ---
 
 # PR + Worktree Workflow

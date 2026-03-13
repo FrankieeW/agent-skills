@@ -1,13 +1,6 @@
 ---
 name: ssh
-description: >
-  SSH remote access patterns and utilities. Use when: connecting to remote servers, managing SSH keys, configuring SSH, creating tunnels, transferring files, or hardening SSH security.
-triggers:
-- ssh
-- remote server
-- remote connection
-- ssh keys
-- ssh tunnel
+description: SSH remote access patterns and utilities for connecting to servers, managing keys, configuring connections, creating tunnels, and transferring files.
 - scp
 - rsync
 ---

@@ -1,7 +1,6 @@
 ---
 name: mathlib-workflow
-description: >
-  Workflow for contributing to mathlib (Lean 4). Use when: setting up mathlib4 repo, creating PRs, working with git branches, or navigating the review process.
+description: Complete workflow for contributing to mathlib (Lean 4), including repo setup, git workflow, PR creation, and review process.
 ---
 
 # Contributing Workflow for mathlib

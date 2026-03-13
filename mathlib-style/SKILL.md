@@ -1,7 +1,6 @@
 ---
 name: mathlib-style
-description: >
-  Code style guide for mathlib (Lean 4). Use when: writing Lean code for mathlib, checking naming conventions, formatting code, or writing documentation.
+description: Code style guide for mathlib (Lean 4), including naming conventions, formatting rules, and documentation requirements.
 ---
 
 # Code Style Guide for mathlib
