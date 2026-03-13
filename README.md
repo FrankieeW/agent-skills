@@ -10,6 +10,8 @@ This repository contains reusable skills that provide specialized instructions f
 
 | Skill | Description |
 |-------|-------------|
+| [tmux](./tmux/) | Terminal multiplexer patterns - control interactive REPLs, dev servers, debuggers, and Claude Code sessions |
+| [ssh](./ssh/) | SSH remote access patterns - connect to servers, manage keys, tunnels, and file transfers |
 | [mathlib-workflow](./mathlib-workflow/) | Contribution workflow for mathlib (Lean 4) - setup, git workflow, PR conventions, and review process |
 | [mathlib-style](./mathlib-style/) | Code style guide for mathlib (Lean 4) - naming conventions, formatting, and documentation |
 | [pr-worktree-workflow](./pr-worktree-workflow/) | Complete workflow for creating worktree and PR based on tasks |
