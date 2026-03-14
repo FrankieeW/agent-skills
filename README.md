@@ -16,6 +16,7 @@ This repository contains reusable skills that provide specialized instructions f
 | [mathlib-style](./mathlib-style/) | Code style guide for mathlib (Lean 4) - naming conventions, formatting, and documentation |
 | [pr-worktree-workflow](./pr-worktree-workflow/) | Complete workflow for creating worktree and PR based on tasks |
 | [lmfdb-cli](./lmfdb-cli/) | Query LMFDB to verify number field properties, elliptic curve data, and algebraic number theory results |
+| [openclaw-rss](./openclaw-rss/) | RSS/Atom feed parser with OpenClaw integration for AI-powered feed monitoring and notifications |
 
 ## Adding New Skills
 
