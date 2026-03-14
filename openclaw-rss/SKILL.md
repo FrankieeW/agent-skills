@@ -1,6 +1,8 @@
 ---
 name: openclaw-rss
-description: Use sfeed to parse RSS/Atom feeds and push updates to OpenClaw. Use when: user wants to monitor RSS feeds and get notifications via OpenClaw, creating an AI-powered RSS reader.
+description: >
+  Use sfeed to parse RSS/Atom feeds and push updates to OpenClaw.
+  Use when: user wants to monitor RSS feeds and get notifications via OpenClaw.
 ---
 
 # OpenClaw RSS Reader
