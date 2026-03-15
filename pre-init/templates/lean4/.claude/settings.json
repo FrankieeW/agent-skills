@@ -1,0 +1,31 @@
+{
+  "mcp_servers": {
+    "lean-lsp": {
+      "command": "lean",
+      "args": ["--server"],
+      "enabled": true
+    }
+  },
+  "hooks": {
+    "preToolUse": [
+      {
+        "name": "lean-build-reminder",
+        "pattern": "lake",
+        "message": "Tip: Run `lake build` after changes to verify compilation"
+      }
+    ],
+    "postToolUse": [
+      {
+        "name": "lean-check",
+        "pattern": "(SKILL.md|.lean)$",
+        "command": "lake build",
+        "description": "Verify Lean file compiles"
+      }
+    ]
+  },
+  "editor": {
+    "fileExtensions": [".lean"],
+    "autoFormat": true,
+    "checkOnSave": true
+  }
+}

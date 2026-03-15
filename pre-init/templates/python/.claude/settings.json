@@ -1,0 +1,43 @@
+{
+  "mcp_servers": {
+    "python-lsp": {
+      "command": "pylsp",
+      "enabled": false
+    }
+  },
+  "hooks": {
+    "preToolUse": [
+      {
+        "name": "venv-reminder",
+        "pattern": "pip|python",
+        "message": "Tip: Use virtual environment - `source venv/bin/activate` or `poetry shell`"
+      }
+    ],
+    "postToolUse": [
+      {
+        "name": "python-format",
+        "pattern": "\\.py$",
+        "command": "black --quiet",
+        "description": "Auto-format Python files"
+      },
+      {
+        "name": "type-check",
+        "pattern": "\\.py$",
+        "command": "mypy",
+        "description": "Type check Python files"
+      }
+    ],
+    "stop": [
+      {
+        "name": "coverage-check",
+        "command": "pytest --cov --cov-fail-under=80",
+        "description": "Verify minimum 80% test coverage before session ends"
+      }
+    ]
+  },
+  "editor": {
+    "fileExtensions": [".py"],
+    "autoFormat": true,
+    "checkOnSave": true
+  }
+}

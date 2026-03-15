@@ -10,7 +10,12 @@ description: >
 
 ## Overview
 
-`pre-init` initializes projects by copying customizable configuration templates from `~/.config/pre-init/{type}/`. This ensures consistent setup across projects while allowing per-project customization.
+`pre-init` initializes projects with configuration templates. It supports a two-tier system:
+
+1. **Default templates** - Built-in templates in `/agent-skills/pre-init/templates/{type}/`
+2. **User templates** - Custom templates in `~/.config/pre-init/{type}/` (takes priority)
+
+This ensures consistent setup while allowing flexible customization without being affected by skill updates.
 
 ## When to Use
 
@@ -72,6 +77,8 @@ Mathematical proofs and theorem proving.
 - Mathdoc setup
 - Mathlib contributor guidelines
 
+**Location:** `/agent-skills/pre-init/templates/lean4/` (skill default) or `~/.config/pre-init/lean4/` (custom)
+
 ### Python
 Data science, tools, and scripts.
 
@@ -81,21 +88,23 @@ Data science, tools, and scripts.
 - Poetry/pip setup
 - Pre-commit hooks
 
+**Location:** `/agent-skills/pre-init/templates/python/` (skill default) or `~/.config/pre-init/python/` (custom)
+
 ### Custom Types
 
 Add your own by creating `~/.config/pre-init/{your-type}/` with the same file structure:
 
 ```
 ~/.config/pre-init/
-├── lean4/
+├── lean4/              (custom Lean4 - overrides skill default)
 │   ├── CLAUDE.md
 │   ├── AGENTS.md
 │   └── .claude/settings.json
-├── python/
+├── python/             (custom Python - overrides skill default)
 │   ├── CLAUDE.md
 │   ├── AGENTS.md
 │   └── .claude/settings.json
-└── your-type/
+└── django/             (your custom type)
     ├── CLAUDE.md
     └── ...
 ```
@@ -130,43 +139,60 @@ This copies all config files to `~/.config/pre-init/my-type/` for reuse.
 
 ## Template Structure
 
-Your templates live in `~/.config/pre-init/`:
+### Skill Default Templates
+Located in `/agent-skills/pre-init/templates/`:
+
+```
+/agent-skills/pre-init/templates/
+├── lean4/              # Lean 4 theorem proving
+│   ├── CLAUDE.md
+│   ├── AGENTS.md
+│   └── .claude/settings.json
+└── python/             # Python data science/tools
+    ├── CLAUDE.md
+    ├── AGENTS.md
+    └── .claude/settings.json
+```
+
+### User Custom Templates
+Located in `~/.config/pre-init/`:
 
 ```
 ~/.config/pre-init/
-├── lean4/              # Lean 4 theorem proving
-│   ├── CLAUDE.md       # Your Lean coding standards
-│   ├── AGENTS.md       # Lean project agents
-│   └── .claude/
-│       └── settings.json
-├── python/             # Python data science/tools
-│   ├── CLAUDE.md       # Your Python standards
-│   ├── AGENTS.md       # Python project agents
-│   └── .claude/
-│       └── settings.json
-└── custom-type/        # Your custom templates
+├── lean4/              # Custom Lean (overrides default)
+├── python/             # Custom Python (overrides default)
+└── django/             # Your custom types
     └── ... (same structure)
 ```
 
+**Priority System:**
+- `~/.config/pre-init/{type}/` (custom) - checked **first**
+- `/agent-skills/pre-init/templates/{type}/` (default) - used if custom doesn't exist
+
+This means you can customize any template without affecting skill updates.
+
 ## Initialization Script
 
-The skill includes a helper script `~/.config/pre-init/init.sh` that:
+The skill includes `init.sh` that:
 
 1. **Detects** project type (if not specified)
-2. **Validates** template exists
+2. **Finds** template with priority system (user > skill default)
 3. **Copies** files to `./{file}`
 4. **Reports** what was initialized
 
 Usage:
 ```bash
 # Explicit type
-bash ~/.config/pre-init/init.sh lean4
+bash init.sh lean4
 
 # Auto-detect
-bash ~/.config/pre-init/init.sh
+bash init.sh
 
 # Save current as template
-bash ~/.config/pre-init/init.sh save-template my-type
+bash init.sh save-template my-type
+
+# List all available templates
+bash init.sh list
 ```
 
 ## Overwrite Behavior
@@ -221,6 +247,8 @@ git commit -m "feat: initialize Lean4 project"
 
 ## Example: Create Your Own Template
 
+**Method 1: Manual Creation**
+
 ```bash
 # Set up your custom Django template
 mkdir -p ~/.config/pre-init/django/.claude
@@ -233,6 +261,34 @@ cp .claude/settings.json ~/.config/pre-init/django/.claude/
 # Now use it for future Django projects
 cd ../new-django-project
 /pre-init django
+```
+
+**Method 2: Save from Existing Project**
+
+```bash
+# Finish setting up your Django project perfectly
+# Then save it as a reusable template:
+bash init.sh save-template django
+
+# Later: initialize new Django projects
+cd ../another-django-app
+/pre-init django
+```
+
+**Method 3: Override Skill Templates**
+
+```bash
+# You can customize the default lean4 template
+# Just create your version in ~/.config/pre-init/lean4/
+
+mkdir -p ~/.config/pre-init/lean4/.claude
+cp my-lean-standards/CLAUDE.md ~/.config/pre-init/lean4/
+cp my-lean-standards/AGENTS.md ~/.config/pre-init/lean4/
+cp my-lean-standards/.claude/settings.json ~/.config/pre-init/lean4/.claude/
+
+# All new Lean4 projects will use your custom version
+cd ../my-math-project
+/pre-init    # Will use your custom lean4 template
 ```
 
 ## Tips
