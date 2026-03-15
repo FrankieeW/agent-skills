@@ -1,65 +1,84 @@
 ---
 name: pre-init
 description: >
-  Initialize new projects with customizable templates (CLAUDE.md, AGENTS.md, MCP config).
-  Copies project-type-specific configurations from ~/.config/pre-init/{type}/ to the current project.
-  Supports Lean4 and Python with extensible template system. Use when: starting a new project, switching project types, or refreshing project configuration.
+  Internal skill - automatically called by /init to copy project configuration templates.
+  Supports Lean4, Python, and custom types with a two-tier template system (user > skill default).
+  Manual usage available but not recommended - use /init instead.
 ---
 
 # pre-init Skill
 
 ## Overview
 
-`pre-init` initializes projects with configuration templates. It supports a two-tier system:
+`pre-init` is an **internal skill** automatically invoked by the `/init` command. It initializes projects with configuration templates using a two-tier system:
 
 1. **Default templates** - Built-in templates in `/agent-skills/pre-init/templates/{type}/`
 2. **User templates** - Custom templates in `~/.config/pre-init/{type}/` (takes priority)
 
 This ensures consistent setup while allowing flexible customization without being affected by skill updates.
 
-## When to Use
+## Intended Usage
 
-**Use pre-init when:**
-- Starting a new project (Lean4, Python, etc.)
-- Switching project types
-- Refreshing/updating project configuration
-- Setting up MCP servers for a new project
+**Primary (Recommended):**
+```bash
+/init    # Automatically runs pre-init
+```
+
+**Secondary (Manual, not recommended):**
+```bash
+/pre-init [type]    # Only if you need to reinitialize
+```
 
 ## Quick Start
 
 ```bash
-# Initialize with project type (lean4 or python)
-/pre-init lean4
+# Recommended: Use official init command
+/init    # Automatically handles project initialization with pre-init
 
-# Or let the skill detect your project type
+# Manual: Reinitialize project (not recommended)
+/pre-init lean4
 /pre-init
 ```
 
-## Workflow
+## How It Works
 
-### 1. Run the Skill
+### Automatic Flow (via /init)
 
-```bash
-/pre-init [type]
+```
+User runs: /init
+    ↓
+/init detects project type
+    ↓
+/init calls pre-init automatically
+    ↓
+pre-init copies template files:
+  - CLAUDE.md
+  - AGENTS.md
+  - .claude/settings.json
+    ↓
+Project is initialized with config files
 ```
 
-- `type` (optional): `lean4`, `python`, or custom type
-- If omitted, skill auto-detects based on project files
+### What Gets Initialized
 
-### 2. What Gets Initialized
-
-For each project type, the skill copies:
+The skill copies these files for each project type:
 
 - **CLAUDE.md** - Claude Code personal rules (coding style, git workflow, testing)
 - **AGENTS.md** - Project-level agent guidelines
 - **.claude/settings.json** - MCP server configuration and hooks
 - **Other files** - Type-specific setup files (e.g., `.env.example`)
 
-### 3. Customize for This Project
+### Manual Usage (if needed)
 
-After initialization, edit these files for project-specific needs:
+If you need to reinitialize or update templates:
 
 ```bash
+# Explicitly specify type
+/pre-init lean4
+
+# Or let it auto-detect
+/pre-init
+
 # Review and customize for your project
 code CLAUDE.md
 code AGENTS.md
@@ -195,15 +214,29 @@ bash init.sh save-template my-type
 bash init.sh list
 ```
 
-## Overwrite Behavior
+## Advanced Usage
 
-- **Existing files**: Skipped (use `--force` to overwrite)
+### Overwrite Behavior
+
+- **Existing files**: Skipped by default (use `--force` to overwrite)
 - **New files**: Created
 - **Directories**: Created if missing
 
 ```bash
-# Force overwrite all files
+# Force overwrite all files (careful!)
 /pre-init lean4 --force
+```
+
+### Reinitialize a Project
+
+If you need to reset configuration files:
+
+```bash
+# Reinitialize with current type
+/pre-init
+
+# Reinitialize with specific type
+/pre-init python --force
 ```
 
 ## Debugging
@@ -224,7 +257,9 @@ If initialization fails:
 2. Check permissions: `ls -la ~/.config/pre-init/`
 3. Verify file structure is correct
 
-## Example: Initialize a Lean4 Project
+## Example: Initialize a New Project
+
+### Recommended Way (Automatic)
 
 ```bash
 # 1. Create project
@@ -232,17 +267,28 @@ mkdir my-mathlib-contrib
 cd my-mathlib-contrib
 git init
 
-# 2. Initialize with pre-init
-/pre-init lean4
+# 2. Run init command (automatically calls pre-init)
+/init
 
-# 3. Customize for your project
+# 3. Customize if needed
 code CLAUDE.md       # Edit coding standards
 code AGENTS.md       # Edit agent guidelines
-code .claude/settings.json  # Enable Lean MCP
+code .claude/settings.json  # Configure MCP
 
-# 4. Start working
+# 4. Commit
 git add .
-git commit -m "feat: initialize Lean4 project"
+git commit -m "feat: initialize project"
+```
+
+### Manual Way (if /init not available)
+
+```bash
+# Manually run pre-init
+/pre-init lean4
+
+# Rest is the same
+code CLAUDE.md
+git add . && git commit -m "feat: initialize project"
 ```
 
 ## Example: Create Your Own Template
@@ -298,10 +344,27 @@ cd ../my-math-project
 - **Regular updates**: Update templates when you refine your standards
 - **Dry run**: Review files before committing after initialization
 
-## Checklist After Initialization
+## Internal Implementation Notes
+
+This skill is designed to be called by the `/init` command, not invoked directly by users. The two-tier template system ensures:
+
+- ✅ User customizations in `~/.config/pre-init/` take priority
+- ✅ Skill updates don't affect personal templates
+- ✅ Each project type can be customized independently
+- ✅ Fallback to defaults if no custom template exists
+
+Manual invocation (`/pre-init`) is supported for edge cases but not recommended for normal workflow.
+
+## After Initialization
+
+Once initialized (automatically by `/init`), you can:
 
 - [ ] Review CLAUDE.md for project-specific needs
 - [ ] Review AGENTS.md for agent guidelines
 - [ ] Configure .claude/settings.json (MCP servers, hooks)
 - [ ] Commit changes: `git add . && git commit -m "feat: initialize project"`
 - [ ] Start work with your agent setup ready
+
+## Note
+
+**This is an internal skill.** Users should use `/init` instead of calling `/pre-init` directly. Manual `/pre-init` usage is only for advanced scenarios like reinitializing a project or debugging template configuration.
