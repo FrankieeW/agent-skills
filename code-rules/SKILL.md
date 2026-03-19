@@ -1,9 +1,9 @@
 ---
-name: personal-code-style
-description: Use when writing Python or Lean code, to follow personal code style with progressive disclosure.
+name: code-rules
+description: Use when writing code, to follow personal code style and ensure documentation is consistent.
 ---
 
-# Personal Code Style
+# Code Rules
 
 Universal rules for all languages + index to language-specific guides.
 
@@ -16,6 +16,18 @@ Universal rules for all languages + index to language-specific guides.
 - **No magic**: No hidden side effects, no implicit behavior
 - **Tests**: Write tests for new functionality
 - **Docstrings**: On modules, classes, and public functions
+
+## Pre-Commit Documentation Check
+
+Before committing, verify if the changes require documentation updates:
+
+1. **New skill added?** → Add to `README.md` → Available Skills table
+2. **New file in skill directory?** → Check if skill's `SKILL.md` or `AGENTS.md` mentions it
+3. **New language/feature?** → Update `languages/` index or tool reference
+4. **File renamed/moved?** → Update all references in `README.md`, `AGENTS.md`, and skill docs
+5. **CLI command added?** → Update tool quick reference
+
+If documentation needs updating → update first, then commit all together.
 
 ## Language Index
 
@@ -55,3 +67,4 @@ MyProject/
 - ❌ Missing type annotations on public APIs
 - ❌ No docstrings on modules and classes
 - ❌ Writing code before writing tests
+- ❌ Committing without checking if docs need updating
