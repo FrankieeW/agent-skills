@@ -19,47 +19,22 @@ Universal rules for all languages + index to language-specific guides.
 
 ## Pre-Commit Documentation Check
 
-Before committing, verify if the changes require documentation updates:
+Before committing, ask yourself:
 
-1. **New skill added?** → Add to `README.md` → Available Skills table
-2. **New file in skill directory?** → Check if skill's `SKILL.md` or `AGENTS.md` mentions it
-3. **New language/feature?** → Update `languages/` index or tool reference
-4. **File renamed/moved?** → Update all references in `README.md`, `AGENTS.md`, and skill docs
-5. **CLI command added?** → Update tool quick reference
+1. **Did I add something new?** (feature, file, module, command) → Is it documented?
+2. **Did I remove or rename something?** → Are old references cleaned up?
+3. **Did I change behavior?** (API, output, flags) → Are docs updated?
+4. **Did I add dependencies?** → Are they recorded? (requirements, package.json, etc.)
+5. **Did I add code that needs a docstring?** → Did I write it?
 
-If documentation needs updating → update first, then commit all together.
+If any answer is "needs update" → update docs first, then commit everything together.
 
 ## Language Index
-
+PLEASE FOLLOW THE LANGUAGE-SPECIFIC GUIDES FOR EACH LANGUAGE YOU USE. They contain important style rules and tool recommendations.
 | Language | Guide File | Key Tools |
 |----------|------------|-----------|
 | Python | `languages/python.md` | uv, ruff, pytest |
 | Lean | `languages/lean.md` | lake, mathlib style |
-
-## Tier 2: Project Structure
-
-```
-Python:
-my_project/
-├── pyproject.toml
-├── src/
-│   └── my_project/
-└── tests/
-
-Lean:
-MyProject/
-├── src/
-│   └── MyProject/
-└── Test/
-    └── MyProject.lean
-```
-
-## Tier 3: Tool Quick Reference
-
-| Language | Format | Lint | Test | Run |
-|----------|--------|------|------|-----|
-| Python | `uv run ruff format` | `uv run ruff check` | `uv run pytest` | `uv run python` |
-| Lean | `lake build` | — | `lake runtests` | `lake run` |
 
 ## Common Mistakes (All Languages)
 
