@@ -10,6 +10,7 @@ This repository contains reusable skills that provide specialized instructions f
 
 | Skill | Description |
 |-------|-------------|
+| [code-rules](./code-rules/) | Personal coding rules and style guides - progressive disclosure (Tier 1: essential, Tier 2: detailed, Tier 3: reference) for various languages |
 | [pre-init](./pre-init/) | Project initialization with customizable templates - initialize projects with CLAUDE.md, AGENTS.md, and MCP config for Lean 4, Python, and custom types |
 | [tmux](./tmux/) | Terminal multiplexer patterns - control interactive REPLs, dev servers, debuggers, and Claude Code sessions |
 | [ssh](./ssh/) | SSH remote access patterns - connect to servers, manage keys, tunnels, and file transfers |
