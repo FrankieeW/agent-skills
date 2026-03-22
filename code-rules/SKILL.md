@@ -20,6 +20,10 @@ Should USE ‘English’ for all code comments, docstrings, and commit messages.
 - **Tests**: Write tests for new functionality
 - **Docstrings**: On modules, classes, and public functions
 
+## Caution
+
+**Never use force flags** (`--force`, `-f`, etc.) without first investigating the cause of failure. If `apply` or similar command fails, use `diff` or other diagnostic tools to understand the issue before attempting force.
+
 ## Pre-Commit Documentation Check
 
 Before committing, ask yourself:
