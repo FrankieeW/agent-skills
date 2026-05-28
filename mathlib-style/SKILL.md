@@ -1,144 +1,145 @@
 ---
 name: mathlib-style
-description: Code style guide for mathlib (Lean 4), including naming conventions, formatting rules, and documentation requirements.
+description: Use when writing or reviewing Lean 4 mathlib code for style, naming, docs, and lint.
 ---
 
-# Code Style Guide for mathlib
+# mathlib Style
 
-Code formatting, naming conventions, and documentation requirements for mathlib4.
+Use this skill to make Lean code acceptable for mathlib review. Treat the upstream
+guides as the source of truth and use this file as an execution checklist.
 
-## Required Guidelines
+Sources:
+- Style: https://leanprover-community.github.io/contribute/style.html
+- Naming: https://leanprover-community.github.io/contribute/naming.html
+- Documentation: https://leanprover-community.github.io/contribute/doc.html
 
-Follow these three key guides:
-1. **[Style Guide](https://leanprover-community.github.io/contribute/style.html)** - Code formatting
-2. **[Naming Conventions](https://leanprover-community.github.io/contribute/naming.html)** - Naming scheme
-3. **[Documentation](https://leanprover-community.github.io/contribute/doc.html)** - Doc requirements
+## Progressive Disclosure Workflow
 
-## File Organization
+Start narrow, then open only the references needed for the task.
 
-```lean
-/-!
-# Module Title
+1. **Triage the change.** Identify whether the work is mainly formatting, naming,
+   documentation, API design, proof maintenance, or lint cleanup.
+2. **Load the minimum reference.**
+   - Formatting/imports/proof layout: read `references/style.md`.
+   - Declaration names/theorem names/module names: read `references/naming.md`.
+   - Module docs/doc strings/citations: read `references/doc.md`.
+3. **Inspect nearby mathlib code.** Match local conventions in adjacent files before
+   introducing a new pattern.
+4. **Apply the relevant checklist below.** Prefer small edits and avoid unrelated
+   refactors.
+5. **Run executable checks.** Use the command checklist that matches the repository
+   and the files touched.
 
-Summary of what this file contains.
--/
+## Core Review Checklist
 
-import Mathlib.Algebra.Group.Basic
--- other imports
+Use this first for every mathlib edit.
 
--- definitions and theorems
+- File names are `UpperCamelCase.lean`, except rare Zulip-discussed exceptions.
+- New mathlib files start with copyright/authors, then `module`, then imports,
+  then a module docstring.
+- `public import` and `import` declarations are grouped separately and kept
+  alphabetic within each block.
+- Lines are at most 100 characters unless there is a compelling local exception.
+- Top-level commands and declarations are flush-left, even inside namespaces.
+- Declaration arguments and return types are explicit enough to read on GitHub.
+- Multi-line theorem statements indent continuation lines by 4 spaces; proofs
+  indent by 2 spaces.
+- `:= by` and tactic-mode `by` stay on the preceding line, never alone.
+- Focusing bullets use `·` for subgoals.
+- Do not use `$`; use `<|`, `|>`, or parentheses.
+- In `rw`/`simp`, write `← ` with a following space.
+- Avoid empty lines inside declarations; use a short comment if separation matters.
+- Do not squeeze terminal `simp` unless performance or brittleness requires it.
+- Prefer API lemmas over forcing unfolding with `erw` or `rfl` after `simp`/`rw`.
+- Use `where` syntax for structures and instances.
+- Add deprecation aliases/messages with `@[deprecated (since := "YYYY-MM-DD")]`
+  when renaming or removing public declarations.
+
+## Naming Checklist
+
+- Proofs/theorems/terms of `Prop`: `snake_case`.
+- `Prop`, `Type`, `Sort`, structures, classes, and inductives: `UpperCamelCase`.
+- Functions are named like their return values.
+- Other terms of `Type`: `lowerCamelCase`.
+- When an `UpperCamelCase` name appears inside a theorem name, lower-camel it
+  inside the `snake_case` name, e.g. `neZero_iff`.
+- Declaration names use American English spelling.
+- Use mathlib's symbol dictionary: `and`, `or`, `iff`, `ne`, `le`, `lt`, `mem`,
+  `union`, `inter`, `smul`, `dvd`, `iSup`, `iInf`, and so on.
+- Name hypotheses with `of` in statement order: `C_of_A_of_B`.
+- Use namespace-qualified structural names where appropriate: `.ext`, `.ext_iff`,
+  `.inj`, `.inj_iff`, `.rec`, `.recOn`, `.induction`, `.induction_on`.
+- Predicates normally appear as prefixes, except established suffix families
+  such as `_injective`, `_surjective`, `_mono`, `_monotone`, `_strictMono`.
+
+## Documentation Checklist
+
+- Every file has a module docstring `/-! ... -/` after imports.
+- Module docs include a title and summary; add sections only when useful:
+  `Main definitions`, `Main statements`, `Notation`, `Implementation notes`,
+  `References`, `Tags`.
+- New bibliography entries go in `docs/references.bib`; cite with mathlib's
+  bracket style.
+- Every definition and major theorem has a doc string. Lemmas with mathematical
+  content should usually have one too.
+- Doc strings use `/-- ... -/`, Markdown, and LaTeX where helpful.
+- Complete-sentence doc strings end with periods.
+- Named theorems in prose are bold, for example `**Mean Value Theorem**`.
+- Multi-line declaration doc strings are not indented after the first line.
+- Use sectioning comments `/-! ### Section title -/` for generated docs; use
+  ordinary comments for implementation-only notes.
+
+## Executable Checks
+
+Run the narrowest checks that prove the edit. In mathlib itself, prefer:
+
+```bash
+lake build Mathlib.Path.To.Module
+lake exe lint-style
+lake exe mk_all
 ```
 
-## Code Style
+Use `lake exe mk_all` when adding, deleting, moving, or renaming modules.
 
-### Key Style Rules
+For focused declaration linting while editing a Lean file, temporarily add one
+of these commands near the end of the file, run the file, then remove it before
+committing unless the project intentionally keeps it:
 
-#### Capitalization
-- **Props/Types**: `UpperCamelCase` (e.g., `Group`, `Ring`)
-- **Theorems/Proofs**: `snake_case` (e.g., `group_eq_of_eq`)
-- **Functions**: Same as return type
-- **Fields/Constructors**: Follow same rules
-
-#### Tactic Mode
 ```lean
-theorem example [Group G] (a b : G) : a * b = b * a := by
-  apply comm_monoid_to_comm_group
-  infer_instance
+#lint
+#lint only docBlame docBlameThm
+#list_linters
 ```
 
-- `by` goes at end of preceding line, not its own line
-- Indent within tactic blocks
-- Use focusing dot `·` for subgoals (insert as `\.`)
+For downstream projects configured with a Lake lint driver, run:
 
-#### Whitespace
-- No `$` - use `<|` or `|>` instead
-- Space after `←` in `rw [← lemma]`
-- No empty lines inside declarations
-
-#### Simp
-- Don't squeeze terminal `simp` calls
-- Squeezed simp breaks on lemma renames
-
-#### Transparency
-- Default: `semireducible`
-- Use `@[reducible]` for definitions that should unfold
-- Use structures (not `irreducible`) for sealed APIs
-
-## Naming Conventions
-
-### Capitalization Rules
-| Type | Convention | Example |
-|------|------------|---------|
-| Props/Types | UpperCamelCase | `Group`, `Ring` |
-| Theorems | snake_case | `group_eq_of_eq` |
-| Functions | Like return type | `a → B → C` → like C |
-| Fields/Constructors | Follow type rules | |
-
-### Symbol Names
-| Symbol | Name |
-|--------|------|
-| `∨` | `or` |
-| `∧` | `and` |
-| `→` | `of` / `imp` |
-| `↔` | `iff` |
-| `≠` | `ne` |
-| `≤` | `le` |
-| `≥` | `ge` |
-
-### Spelling
-- Use **American English**: `factorization`, `Localization`, `FiberBundle`
-
-## Documentation Requirements
-
-### File Header
-```lean
-/-!
-# p-adic Norm
-
-This file defines the `p`-adic norm on `ℚ`.
-
-## Main Definitions
-
-- `padicNorm`
-
-## References
-
-* [F. Q. Gouvêa, *p-adic numbers*][gouvea1997]
-
-## Tags
-
-p-adic, norm, valuation
--/
+```bash
+lake lint
+lake test
 ```
 
-### Doc Strings
-```lean
-/-- If `q ≠ 0`, the `p`-adic norm of `q` is `p ^ (-padicValRat p q)`. -/
-def padicNorm (p : ℕ) (q : ℚ) : ℚ := ...
-```
+If `lake lint` is unavailable downstream, the project likely needs a `lintDriver`
+such as `batteries/runLinter`; do not add project configuration unless the task
+explicitly includes downstream setup.
 
-Requirements:
-- Every definition needs a doc string
-- Use `/-- ... -/` delimiters
-- End sentences with periods
-- Use Markdown and LaTeX
-- Bold full theorem names: `**Mean Value Theorem**`
+## Lint Response Hints
 
-## Deprecation
+- `docBlame`: add a doc string to the reported definition.
+- `docBlameThm`: add a doc string to a theorem or lemma with reusable
+  mathematical content.
+- Naming lints: rename the declaration and add a deprecation alias if it is public.
+- Style lints on whitespace/line endings/unicode: fix the source text rather than
+  silencing the linter.
+- Unused argument or generated-name lints: prefer strengthening the statement,
+  naming arguments intentionally, or using local conventions over adding `nolint`.
+- Use `@[nolint ...]` only for justified false positives; include a nearby comment
+  when the reason is not obvious.
 
-When removing/renaming:
-```lean
-@[deprecated (since := "YYYY-MM-DD")]
-alias old_name := new_name
-```
+## Common Anti-Patterns
 
-- Require deprecation date
-- Provide transition path
-- Delete after 6 months
-
-## Resources
-
-- [Style Guide](https://leanprover-community.github.io/contribute/style.html)
-- [Naming Conventions](https://leanprover-community.github.io/contribute/naming.html)
-- [Documentation Guide](https://leanprover-community.github.io/contribute/doc.html)
-- [mathlib4 Docs](https://leanprover-community.github.io/mathlib4_docs/)
+- Do not introduce a new abstraction just to make a short proof prettier.
+- Do not replace a stable terminal `simp` with a long squeezed `simp only`.
+- Do not change neighboring naming schemes without checking adjacent files.
+- Do not add broad imports when a narrower import builds.
+- Do not leave temporary `#check`, `#eval`, `#lint`, or search commands in PR code.
+- Do not use `irreducible` to seal an API; prefer structures or explicit lemmas.

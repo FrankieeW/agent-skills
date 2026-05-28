@@ -12,7 +12,8 @@ using the Lean doc preview page.
 Each mathlib file should start with:
 
 - a header comment with copyright information (see the recommendations in our style guidelines);
-- the list of imports (one on each line);
+- the `module` keyword on its own line;
+- grouped `public import` and `import` declarations, one on each line;
 - a module docstring containing general documentation, written
   using Markdown and LaTeX.
 
@@ -51,6 +52,8 @@ Authors: Robert Y. Lewis
 ! Please do not edit these lines, except to modify the commit id
 ! if you have ported upstream changes.
 -/
+module
+
 import Mathlib.Algebra.Order.Field.Power
 import Mathlib.NumberTheory.Padics.PadicVal
 
