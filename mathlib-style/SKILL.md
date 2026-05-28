@@ -20,9 +20,18 @@ Start narrow, then open only the references needed for the task.
 1. **Triage the change.** Identify whether the work is mainly formatting, naming,
    documentation, API design, proof maintenance, or lint cleanup.
 2. **Load the minimum reference.**
-   - Formatting/imports/proof layout: read `references/style.md`.
-   - Declaration names/theorem names/module names: read `references/naming.md`.
-   - Module docs/doc strings/citations: read `references/doc.md`.
+   - Unsure which topic applies: read `references/README.md`.
+   - File headers/imports: read `references/style/header-imports.md`.
+   - Declaration/proof layout: read `references/style/declaration-layout.md`.
+   - Tactic proof style: read `references/style/tactic-proofs.md`.
+   - API, normal forms, transparency, deprecation: read `references/style/api-design.md`.
+   - Declaration names: read `references/naming/capitalization.md`.
+   - Theorem-name atoms and symbols: read `references/naming/symbols.md`.
+   - Structural theorem naming: read `references/naming/structural-lemmas.md`.
+   - Module docs: read `references/docs/module-docs.md`.
+   - Declaration doc strings: read `references/docs/docstrings.md`.
+   - Citations and generated docs: read `references/docs/citations-and-sections.md`.
+   - Linter commands and responses: read `references/lint/checks.md`.
 3. **Inspect nearby mathlib code.** Match local conventions in adjacent files before
    introducing a new pattern.
 4. **Apply the relevant checklist below.** Prefer small edits and avoid unrelated
