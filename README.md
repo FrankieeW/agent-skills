@@ -19,6 +19,7 @@ This repository contains reusable skills that provide specialized instructions f
 | [pr-worktree-workflow](./pr-worktree-workflow/) | Complete workflow for creating worktree and PR based on tasks |
 | [lmfdb-cli](./lmfdb-cli/) | Query LMFDB to verify number field properties, elliptic curve data, and algebraic number theory results |
 | [openclaw-rss](./openclaw-rss/) | RSS/Atom feed parser with OpenClaw integration for AI-powered feed monitoring and notifications |
+| [leanmgr-cache-manager](./leanmgr-cache-manager/) | Manage many Lean 4 projects with LeanMgr: .lake disk usage, safe cleanup, restore, gitignore, doctor, toolchain, and worktree workflows |
 
 ## Adding New Skills
 
