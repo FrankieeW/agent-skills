@@ -14,6 +14,9 @@ Use LeanMgr as a local project-fleet tool for Lean 4 cache lifecycle work.
 - Do not rewrite Git history.
 - Run dry-runs before destructive cleanup.
 - Prefer `leanmgr doctor`, `leanmgr size`, and `leanmgr clean --dry-run` before deletion.
+- Prefer `leanmgr gc --dry-run` for fleet-wide reclamation; it skips
+  unrecoverable caches (no `lake-manifest.json` / `lean-toolchain`) unless
+  `--include-unrecoverable` is given.
 - Use `leanmgr restore` to call `lake exe cache get` after cache deletion.
 - Use `leanmgr gitignore` to ensure `.lake/` is ignored before recommending cleanup.
 - A project selector must name an indexed project; `clean`, `restore`, and
@@ -47,6 +50,8 @@ current directory.
 ```sh
 leanmgr clean --tag archived --level hard --dry-run
 leanmgr clean <project> --level soft --dry-run
+leanmgr gc --unused-days 90 --dry-run
+leanmgr gc --target 20GiB --dry-run
 ```
 
 4. Execute only after the user accepts the plan or explicitly requests execution:
