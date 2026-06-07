@@ -16,6 +16,8 @@ Use LeanMgr as a local project-fleet tool for Lean 4 cache lifecycle work.
 - Prefer `leanmgr doctor`, `leanmgr size`, and `leanmgr clean --dry-run` before deletion.
 - Use `leanmgr restore` to call `lake exe cache get` after cache deletion.
 - Use `leanmgr gitignore` to ensure `.lake/` is ignored before recommending cleanup.
+- A project selector must name an indexed project; `clean`, `restore`, and
+  `gitignore <project>` error out on an unknown selector rather than no-op.
 
 ## Workflow
 
@@ -33,7 +35,12 @@ leanmgr doctor
 leanmgr gitignore --all --dry-run
 leanmgr toolchain check
 leanmgr worktree doctor
+leanmgr worktree prune --dry-run
 ```
+
+`leanmgr worktree doctor` and `worktree prune` operate across every indexed
+project, so they surface and clear stale worktrees fleet-wide, not just in the
+current directory.
 
 3. Plan cleanup before deleting:
 
