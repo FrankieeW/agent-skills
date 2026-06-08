@@ -81,6 +81,15 @@ leanmgr ai context --format json
 Prefer `--format json` for programmatic pipelines and `--format codex` or `--format claude`
 for coding-agent prompts.
 
+## Skill Installation
+
+`leanmgr ai skill show --format <codex|claude>` adapts this SKILL.md body to
+the receiving agent's task contract header. The `codex` flag ensures the body
+opens with `# Codex Task Contract`; `claude` opens with
+`# Claude Code Task Context`. If the body already starts with the matching
+header it is passed through; a different leading heading is replaced; a
+missing leading heading is prepended.
+
 ## Boundaries
 
 LeanMgr complements official tools:
