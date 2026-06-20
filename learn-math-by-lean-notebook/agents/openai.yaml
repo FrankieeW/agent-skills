@@ -1,0 +1,4 @@
+interface:
+  display_name: "Lean Math Notebook"
+  short_description: "Create Lean 4 math tutorial notebooks"
+  default_prompt: "Use $learn-math-by-lean-notebook to create a bilingual Lean 4 notebook for a math topic."
