@@ -9,6 +9,9 @@ Default `def`s are semireducible. Use `abbrev` for reducible definitions.
 Avoid using `irreducible` as an API seal. Prefer structures, explicit API
 lemmas, or a clearer abstraction boundary.
 
+Avoid `nonrec` unless it is genuinely needed; prefer restructuring so the
+recursive reference is not required.
+
 If a proof needs `erw` or `rfl` after `simp` or `rw`, consider whether the API
 is missing a theorem in the right normal form.
 

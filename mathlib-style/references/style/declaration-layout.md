@@ -65,6 +65,15 @@ example (n : R) (h : 1 < n) : 0 < n := by
 
 Use a space after binders, and generally write binder types explicitly.
 
+## Lambdas
+
+Write anonymous functions with `fun`; do not use `λ`. Prefer the `↦` arrow over
+`=>` in lambdas:
+
+```lean
+fun x ↦ x + 1
+```
+
 ## Calculations
 
 Place `calc` on the line before the calculation. Align relation symbols when it

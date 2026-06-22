@@ -56,6 +56,7 @@ Use this first for every mathlib edit.
 - `:= by` and tactic-mode `by` stay on the preceding line, never alone.
 - Focusing bullets use `·` for subgoals.
 - Do not use `$`; use `<|`, `|>`, or parentheses.
+- Write anonymous functions with `fun` (not `λ`) and prefer `↦` over `=>`.
 - In `rw`/`simp`, write `← ` with a following space.
 - Avoid empty lines inside declarations; use a short comment if separation matters.
 - Do not squeeze terminal `simp` unless performance or brittleness requires it.
@@ -152,3 +153,4 @@ explicitly includes downstream setup.
 - Do not add broad imports when a narrower import builds.
 - Do not leave temporary `#check`, `#eval`, `#lint`, or search commands in PR code.
 - Do not use `irreducible` to seal an API; prefer structures or explicit lemmas.
+- Do not reach for `nonrec` unless required; prefer restructuring the declaration.
