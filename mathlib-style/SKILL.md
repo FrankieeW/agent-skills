@@ -50,6 +50,8 @@ Use this first for every mathlib edit.
   alphabetic within each block.
 - Lines are at most 100 characters unless there is a compelling local exception.
 - Top-level commands and declarations are flush-left, even inside namespaces.
+- Use `namespace`, `section`, `open`, and `variable` for ownership and scope;
+  keep broad effects close to the declarations that need them.
 - Declaration arguments and return types are explicit enough to read on GitHub.
 - Multi-line theorem statements indent continuation lines by 4 spaces; proofs
   indent by 2 spaces.

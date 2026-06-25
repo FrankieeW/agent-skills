@@ -14,7 +14,8 @@ Upstream sources:
 - `style/header-imports.md`: file names, copyright header, `module`, imports,
   line length, unicode.
 - `style/declaration-layout.md`: top-level layout, theorem statements,
-  explicit types, structures, instances, binders, calculations.
+  namespace/section/open/variable scope, explicit types, structures, instances,
+  binders, calculations.
 - `style/tactic-proofs.md`: `by`, tactic indentation, focusing bullets,
   semicolons, `simp`.
 - `style/api-design.md`: normal forms, transparency, comments, deprecation,

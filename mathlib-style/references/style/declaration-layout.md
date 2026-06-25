@@ -12,6 +12,40 @@ commands.
 Use spaces around `:`, `:=`, and infix operators. Put these tokens before a line
 break rather than at the start of the next line.
 
+## Namespaces, Sections, Opens, and Variables
+
+Use these commands to control API ownership and local scope, not just to shorten
+text. Match nearby mathlib files before introducing a different pattern.
+
+- Use `namespace Foo` when the declarations conceptually belong to `Foo` and
+  should have names like `Foo.bar`. This is the usual home for API attached to a
+  structure, class, construction, or domain namespace.
+- Use `section` to localize shared variables, typeclass assumptions, local
+  attributes, options, notation, or a family of declarations. Name the section
+  when it marks a durable topic, and use an anonymous `section` for short
+  scoping blocks.
+- Do not make Lean `section`s mirror documentation headers mechanically.
+  Documentation headers such as `/-! ### ... -/` are for generated docs and may
+  cut across Lean scopes.
+- Put `variable` declarations as close as practical to the declarations that use
+  them. Broad file-level variables are fine for genuinely global parameters, but
+  move specialized assumptions down into a `section` so later declarations do
+  not inherit unused context.
+- Prefer explicit variable types. Group stable ambient parameters first, then
+  more specialized typeclass assumptions and term variables near the block that
+  needs them.
+- Use `variable (x)` or `variable {x}` near a declaration when only the binder
+  explicitness changes. Avoid changing binder explicitness while also declaring
+  unrelated new variables.
+- Use `open scoped Foo` for notation or scoped attributes. File-level or
+  namespace-level scoped opens are acceptable when the whole file uses that
+  notation; otherwise prefer a narrower scope or `open scoped Foo in`.
+- Use ordinary `open Foo` when it removes repeated qualified names without
+  obscuring ownership. For one declaration or proof, prefer `open Foo in` over a
+  broad open.
+- Prefer local mechanisms such as `variable ... in`, `include ... in`, `omit ...
+  in`, or `open ... in` when only one declaration needs the extra context.
+
 ## Statements and Proofs
 
 - Continuation lines in a multi-line theorem statement are indented 4 spaces.
